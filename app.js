@@ -1,0 +1,51 @@
+require('dotenv').config();
+const express = require('express');
+const Discord = require("discord.js");
+
+const app = express();
+
+app.listen(3000, () => {
+  console.log('Join the Call bot is running!')
+});
+
+app.get("/", (req, res) => {
+  res.send("Join the Call Discord Bot");
+});
+
+
+const client = new Discord.Client({intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"]});
+
+const channelID = process.env.channelID;
+
+client.on("messageCreate", message => {
+  if(message.content === "jtc") {
+    message.channel.send("Lets you know when users join and leave the call");
+  }
+})
+
+client.on("voiceStateUpdate", async (oldState, newState) => { 
+
+  if(oldState.channel !== null && newState.channel !== null)   return;
+  
+  const userID = oldState.id;
+
+  const Guild = client.guilds.cache.get(channelID);
+  const Member = Guild.members.cache.get(userID);
+  
+  const user = await client.users.cache.find(user => user.id === userID);
+  const username = user.username;
+  const channel = await client.channels.cache.find(channel => channel.name === "call-history");
+  
+  if(Member.voice.channel) {
+    channel.send(`<@${userID}> joined the call.`);
+  } else {
+    channel.send(`<@${userID}> has left the call.`);
+  }
+
+  
+});
+
+client.login(process.env.token);
+
+// TODO: When the first person starts the call it should say: <@${userID}> started the call.
+// TODO: Vice versa ^ for ending the call
