@@ -9,5 +9,5 @@ It is currently setup to send messages in a **`#call-history`** text channel.
 Currently does not support multiple servers.
 
 ## Todo:
-[] TODO: When the first person starts the call it should say: <@${userID}> started the call.
-[] TODO: Vice versa ^ for ending the call
+[ ] TODO: When the first person starts the call it should say: <@${userID}> started the call.
+[ ] TODO: Vice versa ^ for ending the call
