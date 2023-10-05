@@ -10,7 +10,7 @@ const app = express();
 const wordFilter = new WordFilter();
 
 app.listen(3000, () => {
-    console.log('Join the Call bot is running!')
+    console.log('Call History Discord Bot running...')
 });
 
 app.get("/", (req, res) => {
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 
-const channelID = process.env.channelID;
+const channelID = process.env.CHANNEL_ID;
 
 client.on("messageCreate", message => {
     if (message.content === "jtc") {
@@ -52,7 +52,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
 });
 
-client.login(process.env.token);
+client.login(process.env.TOKEN);
 
 // TODO: When the first person starts the call it should say: <@${userID}> started the call.
 // TODO: Vice versa ^ for ending the call
