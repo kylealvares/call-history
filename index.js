@@ -10,7 +10,7 @@ const app = express();
 const wordFilter = new WordFilter();
 
 app.listen(3000, () => {
-    console.log('Call History Discord Bot running...')
+    console.log('Call History Discord Bot listening on port...')
 });
 
 app.get("/", (req, res) => {
