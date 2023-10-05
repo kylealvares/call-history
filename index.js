@@ -9,7 +9,7 @@ const WordFilter = require('bad-words');
 const app = express();
 const wordFilter = new WordFilter();
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log('Call History Discord Bot listening on port...')
 });
 
