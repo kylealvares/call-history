@@ -1,3 +1,5 @@
+// deployed: https://dashboard.render.com/web/srv-ckf4bn6npffc73fvch8g/deploys/dep-ckf4eiunpffc7390tn6g
+
 require('dotenv').config();
 
 const sadGifs = require('./sad-gifs.json');
@@ -9,7 +11,7 @@ const WordFilter = require('bad-words');
 const app = express();
 const wordFilter = new WordFilter();
 
-app.listen(5000, () => {
+app.listen(3000, () => {
     console.log('Call History Discord Bot listening on port...')
 });
 
@@ -40,15 +42,33 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     const user = await client.users.cache.find(user => user.id === userID);
     const username = user.username;
-    const channel = await client.channels.cache.find(channel => channel.name === "call-history");
-
+    const callHistoryChannel = await client.channels.cache.find(channel => channel.name === "🪵-logs");
 
     if (Member.voice.channel) {
-        channel.send(`<@${userID}> joined the call in ${newState.channel}.`);
+        callHistoryChannel.send(`<@${userID}> joined the call in ${newState.channel}.`);
     } else {
-        channel.send(`<@${userID}> has left the call in ${oldState.channel}.`);
+        callHistoryChannel.send(`<@${userID}> has left the call in ${oldState.channel}.`);
     }
 
+    // active members
+    const onCallChannel = await client.channels.cache.find(channel => channel.name === "🏓-active");
+    const members = newState.channel && newState.channel.members ?
+        newState.channel.members.filter(member => !member.user.bot)
+        : [];
+
+    // Get the channel you want to delete messages from
+    const channel = client.channels.cache.get('1163268114130157660');
+
+    // Fetch the messages in the channel
+    channel.messages.fetch().then(messages => {
+        channel.bulkDelete(messages);
+    });
+
+    if (members.length === 0) {
+        onCallChannel.send(`https://tenor.com/view/pettyratz-call-me-bored-sad-gif-22155447`);
+    } else {
+        onCallChannel.send(`${newState.channel.name}: ${members.map(member => member.displayName).join(', ')}`);
+    }
 
 });
 
