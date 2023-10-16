@@ -73,9 +73,9 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     // send a message to the log channel indicating if the user joined or left the call
     if (Member.voice.channel) {
-        callHistoryChannel.send(`${user.username} joined the call in ${newState.channel}.`);
+        callHistoryChannel.send(`${user.username} joined the call.`);
     } else {
-        callHistoryChannel.send(`${user.username} has left the call in ${oldState.channel}.`);
+        callHistoryChannel.send(`${user.username} has left the call.`);
     }
 
     // get the active members in the voice channel
