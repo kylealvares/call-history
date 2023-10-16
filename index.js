@@ -68,14 +68,14 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     const Member = Guild.members.cache.get(userID);
 
     const user = await client.users.cache.find(user => user.id === userID);
-    const username = user.username;
+    const userIDReference = `<@${userID}>`;
     const callHistoryChannel = await client.channels.cache.find(channel => channel.name === "🪵-logs");
 
     // send a message to the log channel indicating if the user joined or left the call
     if (Member.voice.channel) {
-        callHistoryChannel.send(`<@${userID}> joined the call in ${newState.channel}.`);
+        callHistoryChannel.send(`${user.username} joined the call in ${newState.channel}.`);
     } else {
-        callHistoryChannel.send(`<@${userID}> has left the call in ${oldState.channel}.`);
+        callHistoryChannel.send(`${user.username} has left the call in ${oldState.channel}.`);
     }
 
     // get the active members in the voice channel
