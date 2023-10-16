@@ -21,6 +21,7 @@ const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD
 const logsChannelID = process.env.LOGS_CHANNEL_ID;
 const activeChannelID = process.env.ACTIVE_CHANNEL_ID;
 const vibesChannelID = process.env.VIBES_CHANNEL_ID;
+const voiceChannelID = process.env.VOICE_CHANNEL_ID;
 
 client.on("messageCreate", message => {
 
@@ -43,7 +44,7 @@ client.on("messageCreate", message => {
             }
         }
         return;
-    } 
+    }
 
     if (message.content === "jtc") {
         message.channel.send("Lets you know when users join and leave the call");
@@ -72,19 +73,18 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     // send a message to the log channel indicating if the user joined or left the call
     if (Member.voice.channel) {
-        callHistoryChannel.send(`<@${userID}> ${user.username} joined the call in ${newState.channel}.`);
+        callHistoryChannel.send(`<@${userID}> joined the call in ${newState.channel}.`);
     } else {
-        callHistoryChannel.send(`<@${userID}> ${user.username} has left the call in ${oldState.channel}.`);
+        callHistoryChannel.send(`<@${userID}> has left the call in ${oldState.channel}.`);
     }
 
     // get the active members in the voice channel
     const onCallChannel = await client.channels.cache.find(channel => channel.name === "🏓-active");
-    const members = newState.channel && newState.channel.members ?
-        newState.channel.members.filter(member => !member.user.bot)
-        : [];
+    const channel = client.channels.cache.get(process.env.VOICE_CHANNEL_ID); 
+    const members = channel.members.map(member => member.displayName);
 
     // delete previous messages from active channel
-    const activeChannel = client.channels.cache.get(activeChannelID); //
+    const activeChannel = client.channels.cache.get(activeChannelID); 
     activeChannel.messages.fetch().then(messages => {
         activeChannel.bulkDelete(messages);
     });
@@ -93,7 +93,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     if (members.length === 0) {
         onCallChannel.send(`https://tenor.com/view/pettyratz-call-me-bored-sad-gif-22155447`);
     } else {
-        onCallChannel.send(`${newState.channel.name}: ${members.map(member => member.displayName).join(', ')}`);
+        onCallChannel.send(`${channel.name}: ${members.map(member => member).join(', ')}`);
     }
 
 });
