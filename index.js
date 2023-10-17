@@ -23,28 +23,54 @@ const activeChannelID = process.env.ACTIVE_CHANNEL_ID;
 const vibesChannelID = process.env.VIBES_CHANNEL_ID;
 const voiceChannelID = process.env.VOICE_CHANNEL_ID;
 
+let autoDelete = false;
+
 client.on("messageCreate", message => {
 
-    if (message.channelId === vibesChannelID) {
-        if (message.content === "purge") {
-            message.channel.messages.fetch().then(messages => {
-                message.channel.bulkDelete(messages.filter(msg => msg.author.id === message.author.id));
-            })
-        } else if (message.content === "sudo purge") {
-            message.channel.messages.fetch().then(messages => {
-                message.channel.bulkDelete(messages);
-            })
-        } else if (message.content === "vibes") {
-            if (message.content.toLowerCase().includes('vibes')) {
-                const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=vibes&rating=g`;
-                fetch(url)
-                    .then(res => res.json())
-                    .then(json => message.channel.send(json.data.url))
-                    .catch(err => console.error(err));
+    const vibesChannel = client.channels.cache.get(vibesChannelID);
+
+    if (message.content === "vanish") {
+        autoDelete = !autoDelete;
+        vibesChannel.send(autoDelete ? 'Vanish mode activated' : 'Vanish mode deactivated');
+    }
+
+    if (autoDelete) {
+        if (message.channelId === vibesChannelID) {
+            if (message.content === "purge" || message.content === "sudo purge") {
+                vibesChannel.send('Cannot purge in vanish mode.');
+            } else {
+                setTimeout(() => {
+                    try {
+                        message.delete(delay = 1)
+                    } catch (err) {
+                        console.error('Auto-delete purging:', err);
+                    }
+                }, 30000)
             }
         }
-        return;
+    } else {
+        if (message.channelId === vibesChannelID) {
+            if (message.content === "purge") {
+                message.channel.messages.fetch()
+                    .then(messages => message.channel.bulkDelete(messages.filter(msg => msg.author.id === message.author.id)))
+                    .catch(err => console.log('Purging:', err));
+            } else if (message.content === "sudo purge") {
+                message.channel.messages.fetch()
+                    .then(messages => message.channel.bulkDelete(messages))
+                    .catch(err => console.log('Sudo purging:', err));
+            } else if (message.content === "vibes") {
+                if (message.content.toLowerCase().includes('vibes')) {
+                    const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=vibes&rating=g`;
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(json => message.channel.send(json.data.url))
+                        .catch(err => console.error(err));
+                }
+            }
+            return;
+        }
     }
+
 
     if (message.content === "jtc") {
         message.channel.send("Lets you know when users join and leave the call");
@@ -80,11 +106,11 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     // get the active members in the voice channel
     const onCallChannel = await client.channels.cache.find(channel => channel.name === "🏓-active");
-    const channel = client.channels.cache.get(process.env.VOICE_CHANNEL_ID); 
+    const channel = client.channels.cache.get(process.env.VOICE_CHANNEL_ID);
     const members = channel.members.map(member => member.displayName);
 
     // delete previous messages from active channel
-    const activeChannel = client.channels.cache.get(activeChannelID); 
+    const activeChannel = client.channels.cache.get(activeChannelID);
     activeChannel.messages.fetch().then(messages => {
         activeChannel.bulkDelete(messages);
     });
