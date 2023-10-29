@@ -6,5 +6,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
+    env_file: stack.env
     environment:
       NODE_ENV: development
