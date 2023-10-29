@@ -108,7 +108,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     // get the active members in the voice channel
     const onCallChannel = await client.channels.cache.find(channel => channel.name === "🏓-active");
-    const channel = client.channels.cache.get(process.env.VOICE_CHANNEL_ID);
+    const channel = client.channels.cache.get(voiceChannelID);
     const members = channel.members.map(member => member.displayName);
 
     // delete previous messages from active channel
