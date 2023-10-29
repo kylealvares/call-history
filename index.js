@@ -51,6 +51,10 @@ client.on("messageCreate", message => {
             }
         }
     } else {
+
+        // last word can be an additional command
+        const cmd = messageContent.split(' ').pop();
+
         if (message.channelId === vibesChannelID) {
             if (messageContent === "purge") {
                 message.channel.messages.fetch()
@@ -68,6 +72,16 @@ client.on("messageCreate", message => {
                         .then(json => message.channel.send(json.data.url))
                         .catch(err => console.error(err));
                 }
+            } else if (cmd[0] === ('/')) {
+                let timeout = cmd.slice(1);
+                if (!Number.isInteger(Number(timeout))) return;
+                setTimeout(() => {
+                    try {
+                        message.delete(delay = 1)
+                    } catch (err) {
+                        console.error('Auto-delete purging:', err);
+                    }
+                }, timeout * 1000)
             }
             return;
         }
