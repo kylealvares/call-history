@@ -29,14 +29,16 @@ client.on("messageCreate", message => {
 
     const vibesChannel = client.channels.cache.get(vibesChannelID);
 
-    if (message.content === "vanish") {
+    const messageContent = message.content.toLowerCase();
+
+    if (messageContent === "vanish") {
         autoDelete = !autoDelete;
         vibesChannel.send(autoDelete ? 'Vanish mode activated' : 'Vanish mode deactivated');
     }
 
     if (autoDelete) {
         if (message.channelId === vibesChannelID) {
-            if (message.content === "purge" || message.content === "sudo purge") {
+            if (messageContent === "purge" || messageContent === "sudo purge") {
                 vibesChannel.send('Cannot purge in vanish mode.');
             } else {
                 setTimeout(() => {
@@ -50,16 +52,16 @@ client.on("messageCreate", message => {
         }
     } else {
         if (message.channelId === vibesChannelID) {
-            if (message.content === "purge") {
+            if (messageContent === "purge") {
                 message.channel.messages.fetch()
                     .then(messages => message.channel.bulkDelete(messages.filter(msg => msg.author.id === message.author.id)))
                     .catch(err => console.log('Purging:', err));
-            } else if (message.content === "sudo purge") {
+            } else if (messageContent === "sudo purge") {
                 message.channel.messages.fetch()
                     .then(messages => message.channel.bulkDelete(messages))
                     .catch(err => console.log('Sudo purging:', err));
-            } else if (message.content === "vibes") {
-                if (message.content.toLowerCase().includes('vibes')) {
+            } else if (messageContent === "vibes") {
+                if (messageContent.includes('vibes')) {
                     const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=vibes&rating=g`;
                     fetch(url)
                         .then(res => res.json())
@@ -72,9 +74,9 @@ client.on("messageCreate", message => {
     }
 
 
-    if (message.content === "jtc") {
+    if (messageContent === "jtc") {
         message.channel.send("Lets you know when users join and leave the call");
-    } else if (wordFilter.isProfane(message.content)) {
+    } else if (wordFilter.isProfane(messageContent)) {
         const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=sad&rating=g`;
         fetch(url)
             .then(res => res.json())
