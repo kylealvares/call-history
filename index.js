@@ -8,7 +8,7 @@ const app = express();
 
 const wordFilter = new WordFilter();
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log('Call History Discord Bot listening on port 3000 ...')
 });
 
