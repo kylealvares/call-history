@@ -8,8 +8,10 @@ const app = express();
 
 const wordFilter = new WordFilter();
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log('Call History Discord Bot listening on port 3000 ...')
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log('Call History Discord Bot listening on port', PORT)
 });
 
 app.get("/", (req, res) => {
