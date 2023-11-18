@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const axios = require('axios');
+const cron = require("node-cron");
 const Discord = require("discord.js");
 const WordFilter = require('bad-words');
 const express = require('express');
@@ -11,7 +13,7 @@ const wordFilter = new WordFilter();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log('Call History Discord Bot listening on port', PORT)
+    console.log('Call History Discord Bot listening on port', PORT);
 });
 
 app.get("/", (req, res) => {
@@ -23,6 +25,7 @@ const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD
 const logsChannelID = process.env.LOGS_CHANNEL_ID;
 const activeChannelID = process.env.ACTIVE_CHANNEL_ID;
 const vibesChannelID = process.env.VIBES_CHANNEL_ID;
+const quotesChannelID = process.env.QUOTES_CHANNEL_ID;
 const voiceChannelID = process.env.VOICE_CHANNEL_ID;
 
 let autoDelete = false;
@@ -141,5 +144,23 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
 
 });
+
+client.once('ready', () => {
+    cron.schedule('30 9 * * *', () => {
+        const quotesChannel = client.channels.cache.get(quotesChannelID);
+        if (quotesChannel) {
+            axios.get('https://zenquotes.io/api/today')
+            .then(response => {
+                const quote = `"${response.data[0].q}"`;
+                const author = `~ ${response.data[0].a}`;
+                const formattedQuote = `**${quote}**\n*${author}*`;
+                quotesChannel.send(formattedQuote);
+            })
+        } else {
+            console.log('Quotes channel not found');
+        }
+    });
+});
+
 
 client.login(process.env.TOKEN);
