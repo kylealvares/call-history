@@ -58,6 +58,18 @@ client.once(Events.ClientReady, (c) => {
       console.log("Quotes channel not found");
     }
   });
+
+  cron.schedule("* * */13 * *", () => {
+    const vibesChannel = client.channels.cache.get(vibesChannelId);
+    if (vibesChannel) {
+      vibesChannel.messages
+        .fetch()
+        .then((messages) => vibesChannel.bulkDelete(messages))
+        .catch((err) => console.log("Bi-weekly purging:", err));
+    } else {
+      console.log("Vibes channel not found");
+    }
+  });
 });
 
 // vanish mode (in 😇vibes)
