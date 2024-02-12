@@ -1,10 +1,19 @@
 // imports
+import {
+  createAudioPlayer,
+  createAudioResource,
+  getVoiceConnection,
+  joinVoiceChannel,
+} from "@discordjs/voice";
 import axios from "axios";
 import WordFilter from "bad-words";
+import { exec, execSync } from "child_process";
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 import express from "express";
 import cron from "node-cron";
+import { createReadStream } from "node:fs";
+import { join } from "node:path";
 import { formattedQuote } from "./utils.js";
 dotenv.config();
 
@@ -73,10 +82,36 @@ client.once(Events.ClientReady, (c) => {
 });
 
 // vanish mode (in 😇vibes)
-client.on(Events.MessageCreate, (message) => {
+client.on(Events.MessageCreate, async (message) => {
   const vibesChannel = client.channels.cache.get(vibesChannelId);
+  const voiceChannel = client.channels.cache.get(voiceChannelId);
   const messageContent = message.content.toLowerCase();
 
+  try {
+    if (messageContent === "test") {
+      const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: voiceChannel.guild.id,
+        adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+      });
+
+      const player = createAudioPlayer();
+      const resource = createAudioResource(createReadStream("./meow.mp3"));
+
+      connection.subscribe(player);
+
+      // execSync("sleep 1");
+
+      player.play(resource);
+      // player.stop();
+
+      // execSync("sleep 1");
+
+      // connection.destroy();
+    }
+  } catch (error) {
+    console.log(error);
+  }
   // toggle activation
   if (messageContent === "vanish") {
     autoDelete = !autoDelete;

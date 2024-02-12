@@ -15,11 +15,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/voice": "^0.16.1",
     "axios": "^1.6.2",
     "bad-words": "^3.0.4",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "ffmpeg-static": "^5.2.0",
+    "libsodium-wrappers": "^0.7.13",
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
