@@ -12,3 +12,4 @@ Currently does not support multiple servers.
 - [ ] TODO: When the first person starts the call it should say: <@${userID}> started the call.
 - [ ] TODO: Vice versa ^ for ending the call
 - [ ] TODO: Github webhook
+- [ ] voice call entry sounds
