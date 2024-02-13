@@ -59,7 +59,7 @@ client.once(Events.ClientReady, (c) => {
     }
   });
 
-  cron.schedule("* * */13 * *", () => {
+  cron.schedule("0 5 7,21 * *", () => {
     const vibesChannel = client.channels.cache.get(vibesChannelId);
     if (vibesChannel) {
       vibesChannel.messages
