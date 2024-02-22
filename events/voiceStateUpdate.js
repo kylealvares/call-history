@@ -14,7 +14,9 @@ export default {
 
     // update logsChannel with join/leave message for this user
     logsChannel.send(
-      `${user.username} ${newState.channel ? "joined" : "has left"} the call.`
+      `**\`${user.displayName}\`** ${
+        newState.channel ? "joined" : "left"
+      } **\`${voiceChannel.name}\`**`
     );
 
     // get the active members in the voice channel
@@ -29,7 +31,7 @@ export default {
     const message =
       members.length === 0
         ? "https://tenor.com/view/pettyratz-call-me-bored-sad-gif-22155447"
-        : `${voiceChannel.name}: ${members.join(", ")}.`;
+        : `**\`${voiceChannel.name}\`** • ${members.join(", ")}`;
     activeChannel.send(message);
   },
 };
