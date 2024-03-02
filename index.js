@@ -3,11 +3,11 @@ import axios from "axios";
 import WordFilter from "bad-words";
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
+import express from "express";
 import fs from "fs";
+import cron from "node-cron";
 import path from "path";
 import { fileURLToPath } from "url";
-import express from "express";
-import cron from "node-cron";
 import { formattedQuote } from "./utils.js";
 
 dotenv.config();
@@ -188,9 +188,7 @@ client.on(Events.MessageCreate, async (message) => {
           .fetch()
           .then((messages) =>
             message.channel.bulkDelete(
-              messages.filter(
-                (message) => message.author.id === message.author.id
-              )
+              messages.filter((mes) => mes.author.id === message.author.id)
             )
           )
           .catch((err) => console.log("Purging:", err));
