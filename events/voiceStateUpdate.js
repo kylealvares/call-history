@@ -5,6 +5,8 @@ export default {
   async execute(oldState, newState) {
     // if (oldState.channel !== null && newState.channel !== null) return; ???????
 
+    if (newState.streaming === !oldState.streaming) return;
+
     const channelCache = oldState.client.channels.cache;
     const user = oldState.member.user;
 
