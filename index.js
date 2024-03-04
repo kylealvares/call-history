@@ -28,7 +28,7 @@ app.get("/", (_, res) => {
 // init
 const wordFilter = new WordFilter();
 
-let autoDelete = false;
+// let autoDelete = false;
 
 const client = new Client({
   intents: [
@@ -98,92 +98,5 @@ for (const file of eventFiles) {
     client.on(event.default.name, (...args) => event.default.execute(...args));
   }
 }
-
-// events
-
-// vanish mode (in 😇vibes)
-client.on(Events.MessageCreate, async (message) => {
-  const vibesChannel = client.channels.cache.get(vibesChannelId);
-  const messageContent = message.content.toLowerCase();
-
-  // toggle activation
-  if (messageContent === "vanish") {
-    autoDelete = !autoDelete;
-    //TODO: add emojis in front
-    vibesChannel.send(
-      "Vanish mode " + `(${autoDelete ? "activated" : "deactivated"})`
-    );
-  }
-
-  if (messageContent === "jtc") {
-    message.channel.send("Lets you know when users join and leave the call");
-  } else if (wordFilter.isProfane(messageContent)) {
-    //TODO: use async/await
-    const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=sad&rating=g`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((json) => message.channel.send(json.data.url))
-      .catch((err) => console.error(err));
-  }
-
-  // timed message deletion
-  if (autoDelete) {
-    if (message.channelId === vibesChannelId) {
-      // prevent purges
-      if (messageContent === "purge" || messageContent === "sudo purge") {
-        vibesChannel.send("Cannot purge in vanish mode.");
-      } else {
-        setTimeout(() => {
-          try {
-            message.delete();
-          } catch (err) {
-            console.error("Auto-delete purging:", err);
-          }
-        }, 30000);
-      }
-    }
-  } else {
-    // last word can be an additional command
-    const cmd = messageContent.split(" ").pop();
-
-    if (message.channelId === vibesChannelId) {
-      if (messageContent === "purge") {
-        message.channel.messages
-          .fetch()
-          .then((messages) =>
-            message.channel.bulkDelete(
-              messages.filter((mes) => mes.author.id === message.author.id)
-            )
-          )
-          .catch((err) => console.log("Purging:", err));
-      } else if (messageContent === "sudo purge") {
-        message.channel.messages
-          .fetch()
-          .then((messages) => message.channel.bulkDelete(messages))
-          .catch((err) => console.log("Sudo purging:", err));
-      } else if (messageContent === "vibes") {
-        if (messageContent.includes("vibes")) {
-          // TODO: change to async/await
-          const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=vibes&rating=g`;
-          fetch(url)
-            .then((res) => res.json())
-            .then((json) => message.channel.send(json.data.url))
-            .catch((err) => console.error(err));
-        }
-      } else if (cmd[0] === "/") {
-        let timeout = cmd.slice(1);
-        if (!Number.isInteger(Number(timeout))) return;
-        setTimeout(() => {
-          try {
-            message.delete();
-          } catch (err) {
-            console.error("Auto-delete purging:", err);
-          }
-        }, timeout * 1000);
-      }
-      return;
-    }
-  }
-});
 
 client.login(process.env.TOKEN);
