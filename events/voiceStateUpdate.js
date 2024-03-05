@@ -26,11 +26,12 @@ export default {
 
     const voiceChannels = channels.filter((channel) => channel.type === 2);
     const activeMessage = voiceChannels
+      .filter((channel) => channel.members.size > 0)
       .map(
         (channel) =>
-          `${channel.name} ▶️ ${channel.members
+          `${channel.name} → ${channel.members
             .map((member) => member.displayName)
-            .join(", ")}`
+            .join(" • ")}`
       )
       .join("\n");
 
