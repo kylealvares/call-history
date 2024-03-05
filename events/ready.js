@@ -1,23 +1,14 @@
 import axios from "axios";
 import { Events } from "discord.js";
 import cron from "node-cron";
-import { formattedQuote } from "../utils.js";
 
 export default {
   name: Events.ClientReady,
   async execute(client) {
-    const quotesChannel = client.channels.cache.get(
-      process.env.QUOTES_CHANNEL_ID
-    );
     console.log(`Ready! Logged in as ${client.user.username}`);
 
     cron.schedule("30 9 * * *", async () => {
-      try {
-        const response = await axios.get("https://zenquotes.io/api/today");
-        await quotesChannel.send(formattedQuote(response.data));
-      } catch (error) {
-        console.error("Failed to fetch and send quote:", error);
-      }
+      await sendQuote(client.channels.cache.get(process.env.QUOTES_CHANNEL_ID));
     });
 
     cron.schedule("0 5 7,21 * *", async () => {

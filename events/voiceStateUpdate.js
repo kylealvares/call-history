@@ -3,37 +3,41 @@ import { Events } from "discord.js";
 export default {
   name: Events.VoiceStateUpdate,
   async execute(oldState, newState) {
-    // if (oldState.channel !== null && newState.channel !== null) return; ???????
+    // channel that triggered this event
+    const eventChannel = newState.channel || oldState.channel;
+    const channels = await newState.client.channels.cache;
+    const logsChannel = await channels.get(process.env.LOGS_CHANNEL_ID);
+    const activeChannel = await channels.get(process.env.ACTIVE_CHANNEL_ID);
 
-    if (newState.streaming === !oldState.streaming) return;
+    // skip unless this user joined/left a voice channel
+    if (newState.channelId === oldState.channelId) return;
 
-    const channelCache = oldState.client.channels.cache;
-    const user = oldState.member.user;
-
-    const voiceChannel = await channelCache.get(process.env.VOICE_CHANNEL_ID);
-    const logsChannel = await channelCache.get(process.env.LOGS_CHANNEL_ID);
-    const activeChannel = await channelCache.get(process.env.ACTIVE_CHANNEL_ID);
-
-    // update logsChannel with join/leave message for this user
+    // log this user's joined/left event
     logsChannel.send(
-      `**\`${user.displayName}\`** ${
+      `${newState.member.user.displayName} ${
         newState.channel ? "joined" : "left"
-      } **\`${voiceChannel.name}\`**`
+      } ${eventChannel.name}`
     );
 
-    // get the active members in the voice channel
-    const members = voiceChannel.members.map((member) => member.displayName);
-
-    // clear activeChannel
+    // clear activeChannel messages
     await activeChannel.messages.fetch().then((messages) => {
       activeChannel.bulkDelete(messages);
     });
 
-    // send a sad gif if no one is in activeChannel, otherwise list who's in it
-    const message =
-      members.length === 0
-        ? "https://tenor.com/view/pettyratz-call-me-bored-sad-gif-22155447"
-        : `**\`${voiceChannel.name}\`** • ${members.join(", ")}`;
-    activeChannel.send(message);
+    const voiceChannels = channels.filter((channel) => channel.type === 2);
+    const activeMessage = voiceChannels
+      .map(
+        (channel) =>
+          `${channel.name} ▶️ ${channel.members
+            .map((member) => member.displayName)
+            .join(", ")}`
+      )
+      .join("\n");
+
+    voiceChannels.every((channel) => channel.members.size === 0)
+      ? activeChannel.send(
+          "https://tenor.com/view/pettyratz-call-me-bored-sad-gif-22155447"
+        )
+      : activeChannel.send(activeMessage);
   },
 };
