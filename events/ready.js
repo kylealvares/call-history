@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Events } from "discord.js";
 import cron from "node-cron";
+import { sendQuote } from "../utils/quotes.js";
 
 export default {
   name: Events.ClientReady,
