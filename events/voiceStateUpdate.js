@@ -6,6 +6,7 @@ export default {
     // channel that triggered this event
     const eventChannel = newState.channel || oldState.channel;
     const channels = await newState.client.channels.cache;
+    const voiceChannels = channels.filter((channel) => channel.type === 2);
     const logsChannel = await channels.get(process.env.LOGS_CHANNEL_ID);
     const activeChannel = await channels.get(process.env.ACTIVE_CHANNEL_ID);
 
@@ -24,7 +25,6 @@ export default {
       activeChannel.bulkDelete(messages);
     });
 
-    const voiceChannels = channels.filter((channel) => channel.type === 2);
     const activeMessage = voiceChannels
       .filter((channel) => channel.members.size > 0)
       .map(
