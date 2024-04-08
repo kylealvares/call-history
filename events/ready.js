@@ -20,7 +20,7 @@ export default {
     });
 
     // periodic vibes channel message deletion
-    cron.schedule("0 5 7,21 * *", async () => {
+    cron.schedule("0 5 7,20 * *", async () => {
       const vibesChannel = client.channels.cache.get(
         process.env.VIBES_CHANNEL_ID
       );
