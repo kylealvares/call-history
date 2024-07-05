@@ -1,17 +1,11 @@
-import WordFilter from "bad-words";
-import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
+import { Client, Collection, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 import express from "express";
 import fs from "fs";
-import cron from "node-cron";
 import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-
-// constants
-const vibesChannelId = process.env.VIBES_CHANNEL_ID;
-const quotesChannelId = process.env.QUOTES_CHANNEL_ID;
 
 // server
 const app = express();
@@ -24,11 +18,6 @@ app.listen(port, () => {
 app.get("/", (_, res) => {
   res.send("🤡 Call History is running...");
 });
-
-// init
-const wordFilter = new WordFilter();
-
-// let autoDelete = false;
 
 const client = new Client({
   intents: [
