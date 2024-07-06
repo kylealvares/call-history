@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { deleteAllMessages } from "../utils/messages.js";
 
 let autoDelete = false;
 
@@ -14,13 +15,9 @@ export default {
 
     const messageContent = message.content.toLowerCase();
 
-    // TODO: separate function for tts channel
     if (message.channelId === ttsChannel.id) {
       if (messageContent === "purge" || messageContent === "sudo purge") {
-        message.channel.messages
-          .fetch()
-          .then((messages) => message.channel.bulkDelete(messages))
-          .catch((err) => console.log("Sudo purging:", err));
+        deleteAllMessages(ttsChannel);
       }
     }
 
@@ -55,21 +52,9 @@ export default {
 
       if (message.channelId === vibesChannel.id) {
         if (messageContent === "purge") {
-          message.channel.messages
-            .fetch()
-            .then((messages) =>
-              message.channel.bulkDelete(
-                messages.filter(
-                  (message) => message.author.id === message.author.id
-                )
-              )
-            )
-            .catch((err) => console.log("Purging:", err));
+          deleteAllMessages(vibesChannel, message.author);
         } else if (messageContent === "sudo purge") {
-          message.channel.messages
-            .fetch()
-            .then((messages) => message.channel.bulkDelete(messages))
-            .catch((err) => console.log("Sudo purging:", err));
+          deleteAllMessages(vibesChannel);
         } else if (messageContent === "vibes") {
           if (messageContent.includes("vibes")) {
             // TODO: change to async/await

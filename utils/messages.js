@@ -1,0 +1,19 @@
+export const deleteAllMessages = async (channel, author) => {
+  let messages = await channel.messages.fetch();
+
+  if (author) {
+    messages = messages.filter((message) => message.author.id === author.id);
+  }
+
+  try {
+    console.log(`Purging #${channel.name} using bulkDelete...`);
+    await channel.bulkDelete(messages);
+  } catch (err) {
+    console.log(
+      "Sudo purging can't happen cause the messages are over 14 days old. Gonna delete one by one instead."
+    );
+    for (const message of messages.values()) {
+      message.delete();
+    }
+  }
+};
