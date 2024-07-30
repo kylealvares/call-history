@@ -13,7 +13,7 @@ export const deleteAllMessages = async (channel, author) => {
       "Sudo purging can't happen cause the messages are over 14 days old. Gonna delete one by one instead."
     );
     for (const message of messages.values()) {
-      message.delete();
+      await message.delete();
     }
   }
 };

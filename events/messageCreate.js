@@ -17,7 +17,7 @@ export default {
 
     if (message.channelId === ttsChannel.id) {
       if (messageContent === "purge" || messageContent === "sudo purge") {
-        deleteAllMessages(ttsChannel);
+        await deleteAllMessages(ttsChannel);
       }
     }
 
