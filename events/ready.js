@@ -1,8 +1,8 @@
 import { Events } from "discord.js";
 import cron from "node-cron";
+import { deleteAllMessages } from "../utils/messages.js";
 import { sendQuote } from "../utils/quotes.js";
 import { bedtimeReminder } from "../utils/reminders.js";
-import { deleteAllMessages } from "../utils/messages.js";
 
 export default {
   name: Events.ClientReady,
@@ -15,14 +15,15 @@ export default {
     });
 
     // bedtime reminders
-    cron.schedule("30 23 * * *", async () => {
+    cron.schedule("59 23 * * *", async () => {
       await bedtimeReminder(client);
     });
 
     // periodic vibes channel message deletion
-    cron.schedule("0 5 7,20 * *", async () => {
-      console.log("Running bi-weekly purge for 😇-vibes channel.");
-      await deleteAllMessages(vibesChannel);
-    });
+    // crashes the entire bot so don't use it for now
+    // cron.schedule("0 5 7,20 * *", async () => {
+    //   console.log("Running bi-weekly purge for 😇-vibes channel.");
+    //   await deleteAllMessages(vibesChannel);
+    // });
   },
 };
