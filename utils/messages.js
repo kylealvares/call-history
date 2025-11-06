@@ -23,7 +23,9 @@ export const activeMembersString = (voiceChannels) => {
     .filter((channel) => channel.members.size > 0)
     .map(
       (channel) =>
-        `${channel} → ${channel.members.map((member) => member).join(" • ")}`
+        `${channel} → ${channel.members
+          .map((member) => member.displayName)
+          .join(" • ")}`
     )
     .join("\n");
 };
