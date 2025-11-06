@@ -17,3 +17,13 @@ export const deleteAllMessages = async (channel, author) => {
     }
   }
 };
+
+export const activeMembersString = (voiceChannels) => {
+  return voiceChannels
+    .filter((channel) => channel.members.size > 0)
+    .map(
+      (channel) =>
+        `${channel} → ${channel.members.map((member) => member).join(" • ")}`
+    )
+    .join("\n");
+};
