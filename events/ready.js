@@ -1,6 +1,5 @@
 import { Events } from "discord.js";
 import cron from "node-cron";
-import { deleteAllMessages } from "../utils/messages.js";
 import { sendQuote } from "../utils/quotes.js";
 import { bedtimeReminder } from "../utils/reminders.js";
 
