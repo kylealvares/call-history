@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { deleteAllMessages } from "../utils/messages.js";
+import { deleteAllMessages, vibesGif } from "../utils/messages.js";
 
 let autoDelete = false;
 
@@ -57,12 +57,7 @@ export default {
           deleteAllMessages(vibesChannel);
         } else if (messageContent === "vibes") {
           if (messageContent.includes("vibes")) {
-            // TODO: change to async/await
-            const url = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=vibes&rating=g`;
-            fetch(url)
-              .then((res) => res.json())
-              .then((json) => message.channel.send(json.data.url))
-              .catch((err) => console.error(err));
+            message.channel.send(await vibesGif());
           }
         } else if (cmd[0] === "/") {
           let timeout = cmd.slice(1);
